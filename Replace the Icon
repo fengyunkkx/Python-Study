@@ -1,0 +1,75 @@
+#include <windows.h>
+#include <stdlib.h>
+
+struct icons {
+    int cnt;
+    char names[128][64];
+    WORD lang[128];
+};
+
+//对每一个资源枚举所有语言的回调
+BOOL CALLBACK EnumResLangProc(HMODULE hModule, LPCSTR lpszType, LPCSTR lpszName, WORD wIDLanguage, LONG lParam)
+{
+    struct icons* i = (struct icons*) lParam;
+	
+    if ((DWORD)lpszName & ~0xffff)
+        strcpy(i->names[i->cnt], lpszName);
+    else
+        memcpy(i->names[i->cnt] + 1, &lpszName, sizeof lpszName);
+
+    i->lang[i->cnt] = wIDLanguage;
+
+    ++i->cnt;
+
+	if (i->cnt == 128) return FALSE;
+    else return TRUE;
+}
+
+//枚举指定类型资源的回调
+BOOL CALLBACK EnumResNameProc(HMODULE hModule, LPCSTR lpszType, LPCSTR lpszName, LONG lParam)
+{
+    EnumResourceLanguagesA(hModule, lpszType, lpszName, EnumResLangProc, lParam);
+    
+    return TRUE;
+}
+
+void ChangeIcon(char* exePath)
+{
+    HGLOBAL hSrcData;
+    LPVOID pSrcData;
+    int nSrcDataLen;
+	HINSTANCE hInst = GetModuleHandleA(0);
+	//载入此exe中的图标资源
+    HRSRC Hsrc = FindResourceA(hInst, MAKEINTRESOURCEA(1), RT_ICON);
+    nSrcDataLen = SizeofResource(hInst, Hsrc);
+    hSrcData = LoadResource(hInst, Hsrc);
+    pSrcData = LockResource(hSrcData);
+
+    {
+        struct icons* is = (struct icons*) malloc(sizeof(struct icons));
+		memset(is, 0, sizeof(struct icons));
+		//枚举exe中的所有图标资源
+        {
+            HMODULE hExeMod = LoadLibraryA(exePath);
+            EnumResourceNamesA(hExeMod, RT_ICON, EnumResNameProc, (LONG)is);
+            FreeLibrary(hExeMod);
+        }
+		//替换exe中的所有图标资源
+        {
+            int i;
+            HANDLE hExeSrc = BeginUpdateResourceA(exePath, FALSE);
+
+            for(i = 0; i < is->cnt; ++i)
+            {
+                LPSTR resName = is->names[i];
+                if (*resName)
+                    UpdateResourceA(hExeSrc, RT_ICON, resName, is->lang[i], pSrcData, nSrcDataLen);
+                else
+					UpdateResourceA(hExeSrc, RT_ICON, MAKEINTRESOURCEA(*(LONG*)(resName + 1)), is->lang[i], pSrcData, nSrcDataLen);
+            }
+
+            EndUpdateResourceA(hExeSrc, FALSE);
+        }
+        free(is);
+    }
+}
