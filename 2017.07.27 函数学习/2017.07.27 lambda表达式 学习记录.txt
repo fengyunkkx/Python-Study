@@ -1,0 +1,22 @@
+#lambda 表达式
+>>> def ds(x):
+	return 2 * x + 1
+
+>>> ds(5)
+11
+>>> lambda x : 2 * x + 1
+<function <lambda> at 0x02DC42B8>
+>>> g = lambda x : 2 * x + 1
+>>> g(5)
+11
+>>> # 这是普通函数:
+>>> def add (x,y):
+	return x + y
+
+>>> add(3,4)
+7
+>>> # 把它们转换为 lambda 表达式:
+>>> g = lambda x, y : x + y
+>>> g(3,4)
+7
+>>> 
