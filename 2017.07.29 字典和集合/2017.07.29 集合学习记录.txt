@@ -1,0 +1,35 @@
+>>> list1
+[1, 2, 3, 4, 5, 0]
+>>>
+>>>
+>>>
+>>> list1 = [1,2,3,4,5,5,3,1,0]
+>>> list1 = list(set(list1))
+>>> list1
+[0, 1, 2, 3, 4, 5]
+>>>
+>>> set1 = {1,2,3,4,5,4,3,2,1,0}
+>>> for each in set1:
+	print(each, end ='')
+
+
+012345
+>>>
+>>> 0 in set1
+True
+>>> 'oo' in set1
+False
+>>> 'tt' not in set1
+True
+>>> set1.add(6)
+>>> set1
+{0, 1, 2, 3, 4, 5, 6}
+>>> set.remove(5)
+Traceback (most recent call last):
+  File "<pyshell#148>", line 1, in <module>
+    set.remove(5)
+TypeError: descriptor 'remove' requires a 'set' object but received a 'int'
+>>> set1.remove(5)
+>>> set1
+{0, 1, 2, 3, 4, 6}
+>>> 
