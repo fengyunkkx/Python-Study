@@ -1,0 +1,13 @@
+>>> import easygui
+>>> easygui.msgbox('嘿大家好')
+'OK'
+
+
+>>> from  easygui import *
+>>> msgbox('嘿！')
+'OK'
+
+
+>>> import easygui as gui
+>>> gui.msgbox("你好呀")
+'OK'
