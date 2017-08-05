@@ -1,0 +1,17 @@
+>>> class Ball:
+	def setName(self, name):
+		self.name = name
+	def kick(self):
+		print("我叫 %s，谁在踢我？" % self.name)
+
+
+>>> a = Ball()
+>>> a.setName('飞火流星')
+>>> a.kick()
+我叫 飞火流星，谁在踢我？
+>>>
+>>> b = Ball()
+>>> b.setName('土豆')
+>>> b.kick()
+我叫 土豆，谁在踢我？
+>>> 
